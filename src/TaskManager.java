@@ -33,4 +33,21 @@ public class TaskManager {
         }
     }
 
+    public void deleteTask(int id) {
+        tasks.removeIf(task -> task.getId() == id);
+        saveTasksToFile("tasks.txt");
+    }
+
+    public void saveTasksToFile(String filename) {
+        try (BufferedWriter writer = Files.newBufferedWriter(Paths.get(filename))) {
+            for (Task task : tasks) {
+                writer.write(String.format("%d,%s,%s,%s,%s,%b%n",
+                        task.getId(), task.getTitle(), task.getDescription(),
+                        task.getDueDate(), task.getPriority(), task.isCompleted()));
+            }
+        } catch (IOException e) {
+            System.err.println("Error saving tasks: " + e.getMessage());
+        }
+    }
+
 }
