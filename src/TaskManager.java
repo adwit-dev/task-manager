@@ -50,4 +50,26 @@ public class TaskManager {
         }
     }
 
+    public void loadTasksFromFile(String filename) {
+        try (BufferedReader reader = Files.newBufferedReader(Paths.get(filename))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] parts = line.split(",");
+                int id = Integer.parseInt(parts[0]);
+                String title = parts[1];
+                String description = parts[2];
+                LocalDate dueDate = LocalDate.parse(parts[3]);
+                Priority priority = Priority.valueOf(parts[4]);
+                boolean isCompleted = Boolean.parseBoolean(parts[5]);
+                Task task = new Task(id, title, description, dueDate, priority);
+                if (isCompleted) {
+                    task.markAsCompleted();
+                }
+                tasks.add(task);
+                nextId = Math.max(nextId, id + 1);
+            }
+        } catch (IOException e) {
+            System.err.println("Error loading tasks: " + e.getMessage());
+        }
+    }
 }
